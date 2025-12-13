@@ -129,7 +129,6 @@ def stream_response(prompt: str, tool_model: str, chat_model: str):
             tool_result = execute_tool(tool_call)
             chat.append(tool_result)
 
-    
     # Stream the final response
     response = model_dict["chat_model"].stream(chat)
     for chunk in response:

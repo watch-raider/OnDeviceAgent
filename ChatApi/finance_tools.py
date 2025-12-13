@@ -18,7 +18,11 @@ def get_latest_news(ticker: str) -> str:
     
     extracted_news = []
     
+<<<<<<< HEAD
+    for article in news_list[:5]:  # Limit to first 3 articles
+=======
     for article in news_list[:5]:  # Limit to first 5 articles
+>>>>>>> main
         content = article.get('content', {})
         
         key_info = {
