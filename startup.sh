@@ -1,7 +1,10 @@
-source ./ollama_env/bin/activate
+#!/bin/bash
 
-open ./chat_ui.html
+# select vm
+source ../ollama_env/bin/activate
 
-fastapi dev ./main.py
+# Open HTML file in default browser
+open ChatApp/chat_ui.html
 
-
+# Start FastAPI server
+fastapi dev ChatApi/main.py
