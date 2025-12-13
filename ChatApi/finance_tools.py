@@ -18,7 +18,7 @@ def get_latest_news(ticker: str) -> str:
     
     extracted_news = []
     
-    for article in news_list[:3]:  # Limit to first 3 articles
+    for article in news_list[:5]:  # Limit to first 5 articles
         content = article.get('content', {})
         
         key_info = {
@@ -82,7 +82,8 @@ def get_key_financial_metrics(ticker: str) -> str:
 
 @tool
 def get_balance_sheet(ticker: str) -> str:
-    """Get the balance sheet of a company given its ticker symbol.
+    """Get the balance sheet of a company given its ticker symbol. 
+    The balance sheet provides a snapshot of the company's assets, liabilities, and shareholders' equity at a specific point in time.
     
     Args:
         ticker (str): The ticker symbol of the company e.g. "MSFT".
@@ -92,6 +93,34 @@ def get_balance_sheet(ticker: str) -> str:
     """
     dat = yf.Ticker(ticker)
     return dat.get_balance_sheet().to_csv(index=True)
+
+@tool
+def get_income_statement(ticker: str) -> str:
+    """Get the income statement of a company given its ticker symbol.
+    The income statement provides insights into the company's revenues, expenses, and profits over a specific period.
+    
+    Args:
+        ticker (str): The ticker symbol of the company e.g. "MSFT".
+
+    Returns:
+        str: The income statement of the company as a string in tabular format.
+    """
+    dat = yf.Ticker(ticker)
+    return dat.get_income_stmt().to_csv(index=True)
+
+@tool
+def get_cash_flow_statement(ticker: str) -> str:
+    """Get the cash flow statement of a company given its ticker symbol. 
+    The cash flow statement provides insights into the cash inflows and outflows from operating, investing, and financing activities.
+    
+    Args:
+        ticker (str): The ticker symbol of the company e.g. "MSFT".
+
+    Returns:
+        str: The cash flow statement of the company as a string in tabular format.
+    """
+    dat = yf.Ticker(ticker)
+    return dat.get_cashflow().to_csv(index=True)
 
 @tool
 def get_dividends(ticker: str, time_period: str = "1y") -> str:

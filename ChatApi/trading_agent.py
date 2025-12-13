@@ -13,7 +13,9 @@ tool_mapping = {
         "get_balance_sheet": ft.get_balance_sheet,
         "get_dividends": ft.get_dividends,
         "get_key_financial_metrics": ft.get_key_financial_metrics,
-        "get_latest_news": ft.get_latest_news
+        "get_latest_news": ft.get_latest_news,
+        "get_income_statement": ft.get_income_statement,
+        "get_cash_flow_statement": ft.get_cash_flow_statement
 }
 
 def initialise_models(tool_model, chat_model, tools: list) -> dict:
@@ -70,7 +72,14 @@ def execute_tool(tool_call: dict) -> dict:
 async def prompt_model(prompt: str, tool_model: str, chat_model: str) -> dict:
     model_dict = initialise_models(
         tool_model, chat_model, 
-        [ft.get_key_financial_metrics, ft.get_balance_sheet, ft.get_dividends, ft.get_latest_news]
+        [
+            ft.get_key_financial_metrics, 
+            ft.get_balance_sheet, 
+            ft.get_dividends, 
+            ft.get_latest_news, 
+            ft.get_income_statement, 
+            ft.get_cash_flow_statement
+        ]
     )
 
     chat = initialise_chat(prompt)
@@ -101,7 +110,14 @@ def stream_response(prompt: str, tool_model: str, chat_model: str):
     # Get tool selection model based on tool_model parameter
     model_dict = initialise_models(
         tool_model, chat_model, 
-        [ft.get_key_financial_metrics, ft.get_balance_sheet, ft.get_dividends, ft.get_latest_news]
+        [
+            ft.get_key_financial_metrics, 
+            ft.get_balance_sheet, 
+            ft.get_dividends, 
+            ft.get_latest_news,
+            ft.get_income_statement,
+            ft.get_cash_flow_statement
+        ]
     )
     
     # Tool selection phase
