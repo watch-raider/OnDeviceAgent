@@ -6,6 +6,23 @@ import yfinance as yf
 from langchain.tools import tool
 
 @tool
+def get_historical_data(ticker: str, period: str = "1d", start: str = None, end: str = None) -> str:
+    """Get historical market price data for a given ticker symbol.
+    
+    Args:
+        ticker (str): The ticker symbol of the company e.g. "MSFT".
+        period (str): The period over which to fetch data. Valid periods: 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max. Default: 1d. Can combine with start/end e.g. end = start + period
+        start (str): The start date for fetching historical data in 'YYYY-MM-DD' format. Optional.
+        end (str): The end date for fetching historical data in 'YYYY-MM-DD' format. Optional.
+
+    Returns:
+        str: Historical market data as a string in tabular format.
+    """
+    dat = yf.Ticker(ticker)
+    hist = dat.history(period=period, start=start, end=end)
+    return hist.to_csv(index=True)
+
+@tool
 def get_latest_news(ticker: str) -> str:
     """Get the latest news articles for a given ticker symbol.
 
@@ -18,11 +35,7 @@ def get_latest_news(ticker: str) -> str:
     
     extracted_news = []
     
-<<<<<<< HEAD
-    for article in news_list[:5]:  # Limit to first 3 articles
-=======
     for article in news_list[:5]:  # Limit to first 5 articles
->>>>>>> main
         content = article.get('content', {})
         
         key_info = {
@@ -127,12 +140,12 @@ def get_cash_flow_statement(ticker: str) -> str:
     return dat.get_cashflow().to_csv(index=True)
 
 @tool
-def get_dividends(ticker: str, time_period: str = "1y") -> str:
+def get_dividends(ticker: str, time_period: str = "1mo") -> str:
     """Get the dividends of a company given its ticker symbol.
     
     Args:
         ticker (str): The ticker symbol of the company e.g. "MSFT".
-        time_period (str): How far back in the past from today to fetch dividends. Default is "1y".
+        time_period (str): How far back in the past from today to fetch dividends. Valid periods: 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max. Default: 1mo
 
     Returns:
         str: The dividends of the company as a string in tabular format.

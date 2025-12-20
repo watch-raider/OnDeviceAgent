@@ -10,6 +10,7 @@ import yfinance as yf
 import finance_tools as ft
 
 tool_mapping = {
+        "get_historical_data": ft.get_historical_data,
         "get_balance_sheet": ft.get_balance_sheet,
         "get_dividends": ft.get_dividends,
         "get_key_financial_metrics": ft.get_key_financial_metrics,
@@ -73,6 +74,7 @@ async def prompt_model(prompt: str, tool_model: str, chat_model: str) -> dict:
     model_dict = initialise_models(
         tool_model, chat_model, 
         [
+            ft.get_historical_data,
             ft.get_key_financial_metrics, 
             ft.get_balance_sheet, 
             ft.get_dividends, 
@@ -111,6 +113,7 @@ def stream_response(prompt: str, tool_model: str, chat_model: str):
     model_dict = initialise_models(
         tool_model, chat_model, 
         [
+            ft.get_historical_data,
             ft.get_key_financial_metrics, 
             ft.get_balance_sheet, 
             ft.get_dividends, 
