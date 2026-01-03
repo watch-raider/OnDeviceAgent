@@ -1,3 +1,9 @@
+import sys
+from pathlib import Path
+
+# Add parent directory (OnDeviceAgent) to path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 import os
 import json
 
@@ -7,7 +13,7 @@ from langchain.messages import AIMessage
 
 import yfinance as yf
 
-import finance_tools as ft
+import ChatApi.finance_tools as ft
 
 tool_mapping = {
         "get_historical_data": ft.get_historical_data,
@@ -70,7 +76,7 @@ def execute_tool(tool_call: dict) -> dict:
         "content": tool_response
     }
 
-async def prompt_model(prompt: str, tool_model: str, chat_model: str) -> dict:
+def prompt_model(prompt: str, tool_model: str, chat_model: str) -> dict:
     model_dict = initialise_models(
         tool_model, chat_model, 
         [
@@ -87,7 +93,7 @@ async def prompt_model(prompt: str, tool_model: str, chat_model: str) -> dict:
     chat = initialise_chat(prompt)
     tool_calls = []
 
-    result = await model_dict["tool_model"].ainvoke(chat)
+    result = model_dict["tool_model"].invoke(chat)
     if isinstance(result, AIMessage) and result.tool_calls:
         print(result.tool_calls)
         for tool_call in result.tool_calls:
@@ -97,9 +103,9 @@ async def prompt_model(prompt: str, tool_model: str, chat_model: str) -> dict:
                 "name": tool_call["name"],
                 "args": tool_call["args"]
             })
-
+    
     if tool_calls:
-        result = await model_dict["chat_model"].ainvoke(chat)
+        result = model_dict["chat_model"].invoke(chat)
     
     return {
         "response": result.content,

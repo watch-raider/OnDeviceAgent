@@ -6,20 +6,19 @@ import yfinance as yf
 from langchain.tools import tool
 
 @tool
-def get_historical_data(ticker: str, period: str = "1d", start: str = None, end: str = None) -> str:
+def get_historical_data(ticker: str, period: str = "1d", start: str = None) -> str:
     """Get historical market price data for a given ticker symbol.
     
     Args:
         ticker (str): The ticker symbol of the company e.g. "MSFT".
         period (str): The period over which to fetch data. Valid periods: 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max. Default: 1d. Can combine with start/end e.g. end = start + period
         start (str): The start date for fetching historical data in 'YYYY-MM-DD' format. Optional.
-        end (str): The end date for fetching historical data in 'YYYY-MM-DD' format. Optional.
 
     Returns:
         str: Historical market data as a string in tabular format.
     """
     dat = yf.Ticker(ticker)
-    hist = dat.history(period=period, start=start, end=end)
+    hist = dat.history(period=period, start=start)
     return hist.to_csv(index=True)
 
 @tool
@@ -56,7 +55,7 @@ def get_latest_news(ticker: str) -> str:
 
 @tool
 def get_key_financial_metrics(ticker: str) -> str:
-    """Extract most important financial metrics.
+    """Get most important financial metrics.
     e.g. current price, market cap, P/E ratios, revenue, earnings, margins, cash flow, dividends, analyst target price.
     
     Args:
@@ -65,7 +64,7 @@ def get_key_financial_metrics(ticker: str) -> str:
     dat = yf.Ticker(ticker)
     full_data = dat.get_info()
 
-    # Define the keys we want to extract
+    # Define the keys we want to get
     important_keys = [
         # Price Data
         "currentPrice", 
