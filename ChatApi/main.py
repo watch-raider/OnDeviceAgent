@@ -1,18 +1,26 @@
 import sys
 from pathlib import Path
+import os
 
 # Add parent directory (OnDeviceAgent) to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
-
-from ChatApi.trading_agent import prompt_model, stream_response
-
 from fastapi.middleware.cors import CORSMiddleware
 
+from ChatApi.trading_agent import prompt_model, stream_response
+from ChatApi.model import SYSTEM_PROMPT, TOOLS
+
+
+from typing import Annotated
+
+from langchain_ollama import ChatOllama
+from langgraph.checkpoint.memory import InMemorySaver
+from langchain.agents import create_agent
+
 app = FastAPI()
+
 
 # Add CORS middleware - IMPORTANT!
 app.add_middleware(
@@ -23,18 +31,32 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-class ChatRequest(BaseModel):
-    tool_model: str
-    chat_model: str
-    prompt: str
+async def model_parameter():
+    checkpointer = InMemorySaver()
+    n_cores = os.cpu_count()
 
-@app.post("/agent/trading/chat")
-async def trading_agent_chat(request: ChatRequest) -> dict:
-    return prompt_model(request.prompt, request.tool_model, request.chat_model)
+    model = ChatOllama(
+        model="granite4:1b",
+        num_thread=n_cores,
+        temperature=0.0
+    )
 
-@app.post("/agent/trading/chat/stream")
-async def trading_agent_chat_stream(request: ChatRequest) -> StreamingResponse:
+    return create_agent(
+        model=model,
+        system_prompt=SYSTEM_PROMPT,
+        tools=TOOLS,
+        checkpointer=checkpointer
+    )
+
+CommonsDep = Annotated[dict, Depends(model_parameter)]
+
+@app.get("/agent/trading/chat")
+async def trading_agent_chat(prompt: str, agent: CommonsDep):
+    return prompt_model(prompt, agent)
+
+@app.get("/agent/trading/chat/stream")
+async def trading_agent_chat_stream(prompt: str, agent: CommonsDep) -> StreamingResponse:
     return StreamingResponse(
-        stream_response(request.prompt, request.tool_model, request.chat_model),
+        stream_response(prompt, agent),
         media_type="text/plain"
     )
