@@ -97,20 +97,22 @@ def get_key_financial_metrics(ticker: str) -> str:
     return json_output
 
 @tool
-def get_balance_sheet(ticker: str) -> str:
+def get_balance_sheet(ticker: str, freq: str = "yearly", start_date: str = "2025", end_date: str = "2026") -> str:
     """Get the balance sheet of a company given its ticker symbol. 
     The balance sheet provides a snapshot of the company's assets, liabilities, and shareholders' equity at a specific point in time.
     
     Args:
         ticker (str): The ticker symbol of the company e.g. "MSFT".
+        freq (str): The frequency of the balance sheet data. Valid options: "yearly", "quarterly", "trailing". Default: "yearly".
 
     Returns:
         str: The balance sheet of the company as a string in tabular format.
     """
     dat = yf.Ticker(ticker)
-    return dat.get_balance_sheet().to_csv(index=True)
+    return dat.get_balance_sheet(freq=freq).to_csv(index=True)
 
 @tool
+# TODO: Add paramter to specify time period to narrow search space
 def get_income_statement(ticker: str) -> str:
     """Get the income statement of a company given its ticker symbol.
     The income statement provides insights into the company's revenues, expenses, and profits over a specific period.

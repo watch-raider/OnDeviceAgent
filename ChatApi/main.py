@@ -9,15 +9,9 @@ from fastapi import FastAPI, Depends
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-from ChatApi.trading_agent import prompt_model, stream_response
-from ChatApi.model import SYSTEM_PROMPT, TOOLS
-
+from ChatApi.trading_agent import prompt_model, stream_response, model_parameter
 
 from typing import Annotated
-
-from langchain_ollama import ChatOllama
-from langgraph.checkpoint.memory import InMemorySaver
-from langchain.agents import create_agent
 
 app = FastAPI()
 
@@ -30,23 +24,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-async def model_parameter():
-    checkpointer = InMemorySaver()
-    n_cores = os.cpu_count()
-
-    model = ChatOllama(
-        model="granite4:1b",
-        num_thread=n_cores,
-        temperature=0.0
-    )
-
-    return create_agent(
-        model=model,
-        system_prompt=SYSTEM_PROMPT,
-        tools=TOOLS,
-        checkpointer=checkpointer
-    )
 
 CommonsDep = Annotated[dict, Depends(model_parameter)]
 

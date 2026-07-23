@@ -14,8 +14,11 @@ from langchain.messages import HumanMessage, AIMessage, ToolMessage
 import yfinance as yf
 
 import ChatApi.finance_tools as ft
+from ChatApi.model import SYSTEM_PROMPT, TOOLS
 
+from langchain_ollama import ChatOllama
 from langgraph.checkpoint.memory import InMemorySaver
+from langchain.agents import create_agent
 
 checkpointer = InMemorySaver()
 
@@ -28,6 +31,42 @@ tool_mapping = {
         "get_income_statement": ft.get_income_statement,
         "get_cash_flow_statement": ft.get_cash_flow_statement
 }
+
+model_name = "granite4:1b"
+
+async def model_parameter():
+    checkpointer = InMemorySaver()
+    n_cores = os.cpu_count()
+
+    model = ChatOllama(
+        model=model_name,
+        num_thread=n_cores,
+        temperature=0.0
+    )
+
+    return create_agent(
+        model=model,
+        system_prompt=SYSTEM_PROMPT,
+        tools=TOOLS,
+        checkpointer=checkpointer
+    )
+
+def initialise_agent(model_name: str):
+    checkpointer = InMemorySaver()
+    n_cores = os.cpu_count()
+
+    model = ChatOllama(
+        model=model_name,
+        num_thread=n_cores,
+        temperature=0.0
+    )
+
+    return create_agent(
+        model=model,
+        system_prompt=SYSTEM_PROMPT,
+        tools=TOOLS,
+        checkpointer=checkpointer
+    )
 
 def prompt_model(prompt: str, agent) -> dict:
     messages = [
