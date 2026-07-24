@@ -1,5 +1,4 @@
-from pydantic import BaseModel
-import ChatApi.finance_tools as ft
+import finance_tools as ft
 
 # Define system prompt
 SYSTEM_PROMPT = """You are a financial analysis assistant who has access to various tools for retrieving stock market and financial data about specific stocks.

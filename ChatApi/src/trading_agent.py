@@ -1,20 +1,12 @@
-import sys
-from pathlib import Path
-
-# Add parent directory (OnDeviceAgent) to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
 import os
 import json
 
 from langchain_ollama import ChatOllama
 
-from langchain.messages import HumanMessage, AIMessage, ToolMessage
+from langchain.messages import HumanMessage, AIMessage
 
-import yfinance as yf
-
-import ChatApi.finance_tools as ft
-from ChatApi.model import SYSTEM_PROMPT, TOOLS
+import finance_tools as ft
+from constants import SYSTEM_PROMPT, TOOLS
 
 from langchain_ollama import ChatOllama
 from langgraph.checkpoint.memory import InMemorySaver

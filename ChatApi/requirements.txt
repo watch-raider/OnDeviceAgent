@@ -1,0 +1,6 @@
+fastapi
+fastapi[standard]
+langchain
+langchain-ollama
+yfinance
+pandas
