@@ -13,7 +13,7 @@ from langchain.messages import AIMessage
 
 import yfinance as yf
 
-import ChatApi.finance_tools as ft
+import finance_tools as ft
 
 tool_mapping = {
         "get_historical_data": ft.get_historical_data,
