@@ -78,18 +78,7 @@
                 setIsLoading(true);
 
                 try {
-                    const response = await fetch(`${apiUrl}/agent/trading/chat/stream`, {
-                        method: 'POST',
-                        headers: {
-                            'accept': 'text/plain',
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            tool_model: toolModel,
-                            chat_model: chatModel,
-                            prompt: currentInput
-                        })
-                    });
+                    const response = await fetch(`${apiUrl}/agent/trading/chat/stream?prompt=${encodeURIComponent(currentInput)}`);
 
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
