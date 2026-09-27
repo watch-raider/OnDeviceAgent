@@ -23,6 +23,15 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     --mount=type=bind,source=requirements.txt,target=requirements.txt \
     pip install -r requirements.txt
 
+# Copy the source code into the container.
+COPY . .
+
+# Expose the port that the application listens on.
+EXPOSE 8000
+
+# Run the application.
+CMD ["/venv/bin/python3", "-m", "uvicorn", "main:app", "--host=0.0.0.0", "--port=8000"]
+
 # Use the minimal runtime image. It runs as nonroot by default.
 FROM dhi.io/python:3.12
 

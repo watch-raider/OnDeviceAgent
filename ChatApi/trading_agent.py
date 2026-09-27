@@ -29,16 +29,23 @@ def initialise_models(tool_model, chat_model, tools: list) -> dict:
     n_cores = os.cpu_count()
     model_dict = {}
 
+    ollama_url = os.getenv(
+        "OLLAMA_URL",
+        "http://localhost:11434"
+    )
+
     model_dict["tool_model"] = ChatOllama(
         model=tool_model,
         num_thread=n_cores,
-        temperature=0.0
+        temperature=0.0,
+        base_url=ollama_url
     ).bind_tools(tools)
 
     model_dict["chat_model"] = ChatOllama(
         model=chat_model,
         num_thread=n_cores,
-        temperature=0.5
+        temperature=0.5,
+        base_url=ollama_url
     )
 
     return model_dict
