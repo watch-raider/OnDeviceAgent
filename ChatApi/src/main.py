@@ -1,15 +1,8 @@
-import sys
-from pathlib import Path
-import os
-
-# Add parent directory (OnDeviceAgent) to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
 from fastapi import FastAPI, Depends
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-from ChatApi.trading_agent import prompt_model, stream_response, model_parameter
+from trading_agent import prompt_model, stream_response, model_parameter
 
 from typing import Annotated
 
