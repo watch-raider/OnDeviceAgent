@@ -1,15 +1,63 @@
-# Comments are provided throughout this file to help you get started.
-# If you need more help, visit the Docker Compose reference guide at
-# https://docs.docker.com/go/compose-spec-reference/
-
-# Here the instructions define your application as a service called "server".
-# This service is built from the Dockerfile in the current directory.
-# You can add other services your application may depend on here, such as a
-# database or a cache. For examples, see the Awesome Compose repository:
-# https://github.com/docker/awesome-compose
 services:
+  # Application service. The `target: builder` line builds the development
+  # image (includes a shell and tools); the production stage of the
+  # Dockerfile is unused in development.
   server:
     build:
       context: .
+      target: builder
     ports:
       - 8000:8000
+    environment:
+      - POSTGRES_SERVER=db
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=ondeviceagentdb
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
+
+      # Ollama service
+      - OLLAMA_URL=http://ollama:11434
+    depends_on:
+      db:
+        condition: service_healthy
+    secrets:
+      - db-password
+    develop:
+      watch:
+        - action: rebuild
+          path: .
+  # Database service. Reads the password from a Docker secret mounted at
+  # /run/secrets/db-password. Compose waits for the healthcheck to pass
+  # before starting the server, via the server's depends_on.
+  db:
+    image: dhi.io/postgres:18
+    restart: always
+    user: postgres
+    secrets:
+      - db-password
+    volumes:
+      - db-data:/var/lib/postgresql
+    environment:
+      - POSTGRES_DB=ondeviceagentdb
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
+    expose:
+      - 5432
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  ollama:
+    image: ollama/ollama:latest
+    restart: unless-stopped
+
+    volumes:
+      - ollama-data:/root/.ollama
+
+    ports:
+      - 11434:11434
+volumes:
+  db-data:
+  ollama-data:
+secrets:
+  db-password:
+    file: db/password.txt
